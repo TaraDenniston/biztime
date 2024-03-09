@@ -23,7 +23,6 @@ router.get('/:id', async (req, res, next) => {
       i.paid, i.add_date, i.paid_date, c.name, c.description FROM invoices 
       AS i JOIN companies AS c ON (i.comp_code = c.code) WHERE id=$1`, 
       [id]);
-    console.log(results.rows[0]);
     if (results.rows.length === 0) {
       throw new ExpressError(`Invoice ID '${id}' does not exist`, 404)
     }
@@ -60,13 +59,20 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-// router.put('/:id', async (req, res, next) => {
-//   try {
-
-//   } catch (e) {
-//     return next(e);
-//   }
-// })
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { amt } = req.body;
+    const results = await db.query(`UPDATE invoices SET amt=$1 WHERE id=$2 
+      RETURNING id, comp_code, amt, paid, add_date, paid_date`, [amt, id]);
+    if (results.rows.length === 0) {
+      throw new ExpressError(`Invoice ID '${id}' does not exist`, 404)
+    }
+    return res.json({invoice: results.rows[0]});
+  } catch (e) {
+    return next(e);
+  }
+})
 
 // router.delete('/:id', async (req, res, next) => {
 //   try {
