@@ -20,7 +20,7 @@ router.get('/:code', async (req, res, next) => {
     const results = await db.query(`SELECT code, name, description 
       FROM companies WHERE code = $1`, [code]);
     if (results.rows.length === 0) {
-      throw new ExpressError(`Code "${code}" does not exist`, 404);
+      throw new ExpressError(`Code '${code}' does not exist`, 404);
     }
     return res.json({ company: results.rows[0] });
   } catch (e) {
@@ -39,6 +39,23 @@ router.post('/', async (req, res, next) => {
     return next(e);
   }
 })
+
+router.put('/:code', async (req, res, next) => {
+  try {
+    const { code } = req.params;
+    const { name, description } = req.body;
+    const results = await db.query(`UPDATE companies SET name=$1, 
+      description=$2 WHERE code=$3 RETURNING code, name, description`, 
+      [name, description, code]);
+    if (results.rows.length === 0) {
+      throw new ExpressError(`Code '${code}' does not exist`, 404);
+    }
+    return res.json({ company: results.rows[0] })
+  } catch (e) {
+    return next(e);
+  }
+})
+
 
 
 module.exports = router;
