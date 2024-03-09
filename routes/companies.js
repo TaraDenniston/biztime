@@ -56,6 +56,18 @@ router.put('/:code', async (req, res, next) => {
   }
 })
 
-
+router.delete('/:code', async (req, res, next) => {
+  try {
+    const { code } = req.params;
+    const company = await db.query(`SELECT * FROM companies WHERE code=$1`, [code]);
+    if (company.rows.length === 0) {
+      throw new ExpressError(`Code '${code}' does not exist`, 404);
+    }
+    const results = await db.query(`DELETE FROM companies WHERE code=$1`, [code]);
+    return res.send({ status: 'deleted' });
+  } catch (e) {
+    return next(e);
+  }
+})
 
 module.exports = router;
