@@ -63,4 +63,25 @@ describe('GET /lily', () => {
       }
     })
   })
+
+  test('Return 404 status when company does not exist', async () => {
+    const response = await request(app).get("/companies/fake-company");
+    expect(response.status).toEqual(404);
+  })
+})
+
+describe('POST /', () => {
+  test('Create new company', async () => {
+    const response = await request(app).post('/companies')
+      .send({code: "new", name: 'New Company', description: 'Description of New Company'});
+    expect(response.body).toEqual(
+      {
+        "company": {
+          code: "new",
+          name: "New Company",
+          description: "Description of New Company"
+        }
+      }
+    );
+  })
 })
