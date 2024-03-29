@@ -5,6 +5,7 @@ const app = require('../app');
 const db = require('../db');
 
 const { createData } = require('./test-data');
+const Test = require('supertest/lib/test');
 
 
 beforeEach(createData);
@@ -34,7 +35,7 @@ describe('GET /companies', () => {
   })
 })
 
-describe('GET /lily', () => {
+describe('GET /companies/[code]', () => {
   test('Return company information', async () => {
     const res = await request(app).get('/companies/lily');
     expect(res.body).toEqual({
@@ -70,7 +71,7 @@ describe('GET /lily', () => {
   })
 })
 
-describe('POST /', () => {
+describe('POST /companies', () => {
   test('Create new company', async () => {
     const response = await request(app).post('/companies')
       .send({code: "new", name: 'New Company', description: 'Description of New Company'});
@@ -83,5 +84,39 @@ describe('POST /', () => {
         }
       }
     );
+  })
+})
+
+describe('PUT /companies/[code]', () => {
+  test('Edit a company', async () => {
+    const response = await request(app).put('/companies/lily')
+      .send({
+        name: "Lily's Fast-Food Biscuits", 
+        description: "Industrial-grade, speedy, four-paw biscuits"
+      });
+    expect(response.body).toEqual(
+      {
+        "company": {
+          code: "lily",
+          name: "Lily's Fast-Food Biscuits",
+          description: "Industrial-grade, speedy, four-paw biscuits"
+        }
+      }
+    );
+  })
+  test('Return 404 status when company does not exist', async () => {
+    const response = await request(app).put("/companies/fake-company");
+    expect(response.status).toEqual(404);
+  })
+})
+
+describe('DELETE /companies/[code]', () => {
+  test('Delete a company', async () => {
+    const response = await request(app).delete('/companies/bubba-gump');
+    expect(response.body).toEqual({"status": "deleted"});
+  })
+  test('Return 404 status when company does not exist', async () => {
+    const response = await request(app).delete("/companies/fake-company");
+    expect(response.status).toEqual(404);
   })
 })
