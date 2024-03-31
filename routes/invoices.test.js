@@ -93,7 +93,7 @@ describe('POST /invoices', () => {
   })
 })
 
-describe('PUT /invoices/[code]', () => {
+describe('PUT /invoices/[id]', () => {
   test('Edit an invoice', async () => {
     const response = await request(app).put('/invoices/3')
       .send({amt: "500", id: 3});
@@ -112,6 +112,17 @@ describe('PUT /invoices/[code]', () => {
   })
   test('Return 404 status when invoice does not exist', async () => {
     const response = await request(app).put("/invoices/99");
+    expect(response.status).toEqual(404);
+  })
+})
+
+describe('DELETE /invoices/[id]', () => {
+  test('Delete an invoice', async () => {
+    const response = await request(app).delete('/invoices/2');
+    expect(response.body).toEqual({status: "deleted"});
+  })
+  test('Return 404 status when invoice does not exist', async () => {
+    const response = await request(app).delete("/invoices/99");
     expect(response.status).toEqual(404);
   })
 })
