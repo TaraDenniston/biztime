@@ -43,6 +43,7 @@ describe('GET /companies/[code]', () => {
         code: "lily",
         name: "Lily's Biscuits", 
         description: "Speedy biscuits since 2023",
+        industries: [],
         invoices: [
           {
             add_date: "2024-01-01T05:00:00.000Z",

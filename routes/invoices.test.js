@@ -96,16 +96,16 @@ describe('POST /invoices', () => {
 describe('PUT /invoices/[id]', () => {
   test('Edit an invoice', async () => {
     const response = await request(app).put('/invoices/3')
-      .send({amt: "500", id: 3});
+      .send({amt: "300", paid: true});
     expect(response.body).toEqual(
       {
         invoice: {
           id: 3,
           comp_code: "bubba-gump",
-          amt: 500,
-          paid: false,
+          amt: 300,
+          paid: true,
           add_date: expect.any(String),
-          paid_date: null,
+          paid_date: expect.any(String),
         }
       }
     );
