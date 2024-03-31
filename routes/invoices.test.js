@@ -68,9 +68,27 @@ describe('GET /invoices/[id]', () => {
       }
     })
   })
-
   test('Return 404 status when invoice does not exist', async () => {
     const response = await request(app).get("/invoices/99");
     expect(response.status).toEqual(404);
+  })
+})
+
+describe('POST /invoices', () => {
+  test('Create new invoice', async () => {
+    const response = await request(app).post('/invoices')
+      .send({comp_code: "bubba-gump", amt: 100});
+    expect(response.body).toEqual(
+      {
+        invoice: {
+          id: 4,
+          comp_code: "bubba-gump",
+          amt: 100,
+          paid: false,
+          add_date: expect.any(String),
+          paid_date: null,
+        }
+      }
+    );
   })
 })
