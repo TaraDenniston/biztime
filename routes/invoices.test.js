@@ -49,3 +49,28 @@ describe('GET /invoices', () => {
     });
   })
 })
+
+describe('GET /invoices/[id]', () => {
+  test('Return details for a specific invoice', async () => {
+    const res = await request(app).get('/invoices/1');
+    expect(res.body).toEqual({
+      invoice: {
+        id: 1,
+        amt: 100, 
+        paid: false,
+        add_date: "2024-01-01T05:00:00.000Z", 
+        paid_date: null,
+        company: {
+          code: "lily",
+          description: "Speedy biscuits since 2023",
+          name: "Lily's Biscuits"
+        }
+      }
+    })
+  })
+
+  test('Return 404 status when invoice does not exist', async () => {
+    const response = await request(app).get("/invoices/99");
+    expect(response.status).toEqual(404);
+  })
+})
