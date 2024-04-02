@@ -42,5 +42,23 @@ router.post('/', async (req, res, next) => {
   }
 })
 
+router.post('/:code', async (req, res, next) => {
+  try {
+    const indCode = req.params.code;
+    const compCode = req.body.comp_code;
+    const industry = await db.query (`SELECT * FROM industries
+      WHERE code=$1`, [indCode])
+    if (industry.rows.length === 0) {
+      throw new ExpressError(`Industry Code '${indCode}' does not exist`, 404);
+    }
+    const results = await db.query(`INSERT INTO companies_industries 
+      (comp_code, ind_code) VALUES ($1, $2) RETURNING comp_code`, 
+      [compCode, indCode]);
+    return res.status(201).json({ added: results.rows[0] });
+  } catch (e) {
+    return next(e);
+  }
+})
+
 
 module.exports = router;
