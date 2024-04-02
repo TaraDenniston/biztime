@@ -23,7 +23,20 @@ router.get('/', async (req, res, next) => {
         }
       });
     });
+
     return res.json({ industries: industries })
+  } catch (e) {
+    return next(e);
+  }
+})
+
+router.post('/', async (req, res, next) => {
+  try {
+    const { code, industry } = req.body;
+    const results = await db.query(`INSERT INTO industries (code, 
+      industry) VALUES ($1, $2) RETURNING code, industry`, 
+      [code, industry]);
+    return res.status(201).json({ industry: results.rows[0] });
   } catch (e) {
     return next(e);
   }
